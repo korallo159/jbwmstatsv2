@@ -1,0 +1,11 @@
+name: JbwmstatsV2
+version: ${project.version}
+main: koral.jbwmstatsv2.JbwmstatsV2
+api-version: 1.16
+authors: [ koral ]
+description: jbwm stats
+commands:
+  statspurge:
+    permission: jbwmstats.purge
+  stats:
+  createtable:
