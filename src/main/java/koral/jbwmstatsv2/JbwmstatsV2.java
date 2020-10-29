@@ -10,7 +10,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public final class JbwmstatsV2 extends JavaPlugin implements Listener {
@@ -39,9 +42,6 @@ public final class JbwmstatsV2 extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        for(Player p: Bukkit.getOnlinePlayers()) {
-            pushStats(p);
-        }
     }
 
 
@@ -50,15 +50,16 @@ public final class JbwmstatsV2 extends JavaPlugin implements Listener {
     public void onPlayerJoin(PlayerJoinEvent e){
         Player p = e.getPlayer();
         CreatePlayerAsync(p);
+        p.sendMessage("test");
     }
 
 @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e ){
         Player p = e.getPlayer();
-    PushStatsAsync(p);
+        database.pushCustomStats(p.getUniqueId(), p);
 }
 
-    public void PushStatsAsync(Player p) {
+ /*   public void PushStatsAsync(Player p) {
         Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
             @Override
             public void run() {
@@ -66,6 +67,8 @@ public final class JbwmstatsV2 extends JavaPlugin implements Listener {
             }
         });
     }
+
+  */
 
     public void CreatePlayerAsync(Player p) {
         Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
@@ -77,7 +80,7 @@ public final class JbwmstatsV2 extends JavaPlugin implements Listener {
     }
 
 
-    public void pushStats(Player p ){
+ /*   public void pushStats(Player p ){
         int ticks = p.getStatistic(Statistic.PLAY_ONE_MINUTE);
         long seconds = ticks/20;
         database.updateTime(p.getUniqueId(), seconds);
@@ -90,7 +93,7 @@ public final class JbwmstatsV2 extends JavaPlugin implements Listener {
         database.updateZombieQuery(p.getUniqueId(), totalZombieKilled);
         int kills = p.getStatistic(Statistic.PLAYER_KILLS);
         database.updateKillsQuery(p.getUniqueId(), kills);
-    }
+    } */
 
  /*   @EventHandler
     public void snowball(ProjectileLaunchEvent e){

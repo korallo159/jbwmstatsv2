@@ -20,22 +20,31 @@ public class JbwmstatsV2Commands implements CommandExecutor, TabCompleter {
         database = new JbwmStatsV2Database(plugin);
     }
 
+    public List<String> statistics(){
+        List<String> stats = new ArrayList<>();
+        for (Statistic s : Statistic.values()) {
+            stats.add(s.toString());
 
+        }
+        List<String> blackStatsList = new ArrayList<>();
+        blackStatsList.add(Statistic.MINE_BLOCK.toString()); blackStatsList.add(Statistic.USE_ITEM.toString()); blackStatsList.add(Statistic.BREAK_ITEM.toString());
+        blackStatsList.add(Statistic.CRAFT_ITEM.toString());blackStatsList.add(Statistic.KILL_ENTITY.toString()); blackStatsList.add(Statistic.PICKUP.toString());
+        blackStatsList.add(Statistic.DROP.toString());
+        stats.removeAll(blackStatsList);
+        return stats;
+    }
 
+//TODO tab complete of current Tables.
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (command.getName().equals("stats") && args.length == 1){
             List<String> commands = new ArrayList<>();
             commands.add("add");
+            commands.add("remove");
             return commands;
         }
-
         if (command.getName().equals("stats") && args.length == 2) {
-            List<String> stats = new ArrayList<>();
-            for (Statistic s : Statistic.values()) {
-                stats.add(s.toString());
-            }
-            return stats;
+            return statistics();
         }
         return null;
     }
@@ -58,19 +67,24 @@ public class JbwmstatsV2Commands implements CommandExecutor, TabCompleter {
 
         }
 
-
 //TODO check type of variabile
         if(command.getName().equals("stats"))
         switch(args[0]){
             case "add":
                 if(args.length == 2){
-                    p.sendMessage("Table create");
                     Statistic s = Statistic.valueOf(String.valueOf((args[1])));
-                      database.customStatisticCreate(s.toString());
+                        database.customStatisticCreate(s.toString());
+                        p.sendMessage(ChatColor.GREEN + "Utworzono kolumne " + s.toString());
             //         s.toString();
               //      p.sendMessage("test" + s);
                 }
                 break;
+            case"remove":
+                if(args.length == 2) {
+                    Statistic s = Statistic.valueOf(String.valueOf((args[1])));
+                    database.statisticRemove(s.toString());
+                    p.sendMessage(ChatColor.RED + "Usunięto kolumne " + s);
+                }
         }
 
         return false;
