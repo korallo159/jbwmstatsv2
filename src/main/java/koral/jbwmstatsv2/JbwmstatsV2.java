@@ -16,6 +16,7 @@ import java.util.List;
 
 public final class JbwmstatsV2 extends JavaPlugin implements Listener {
     private JbwmstatsV2Commands commandExecutor;
+    private JbwmStatsV2TabCompletion tabCompleter;
 
     JbwmStatsV2Database database = new JbwmStatsV2Database(this);
     @Override
@@ -32,7 +33,7 @@ public final class JbwmstatsV2 extends JavaPlugin implements Listener {
         this.getCommand("statspurge").setExecutor(commandExecutor);
         this.getCommand("stats").setExecutor(commandExecutor);
         this.getCommand("createtable").setExecutor(commandExecutor);
-        this.getCommand("stats").setTabCompleter(new JbwmstatsV2Commands(this));
+        this.getCommand("stats").setTabCompleter(new JbwmStatsV2TabCompletion(this));
         database.connectToDatabase();
         database.createTable();
 
@@ -40,15 +41,14 @@ public final class JbwmstatsV2 extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
+        for(Player p: Bukkit.getOnlinePlayers())
+        database.pushCustomStats(p);
     }
-
-
 
 @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e){
         Player p = e.getPlayer();
         CreatePlayerAsync(p);
-        p.sendMessage("test");
     }
 
 @EventHandler
@@ -74,40 +74,6 @@ public final class JbwmstatsV2 extends JavaPlugin implements Listener {
             }
         });
     }
-
-
- /*   public void pushStats(Player p ){
-        int ticks = p.getStatistic(Statistic.PLAY_ONE_MINUTE);
-        long seconds = ticks/20;
-        database.updateTime(p.getUniqueId(), seconds);
-        int snowballsThrowed = p.getStatistic(Statistic.USE_ITEM, Material.SNOWBALL);
-        database.updateThrowedSnowballs(p.getUniqueId(), snowballsThrowed);
-        int standardzombieKilled = p.getStatistic(Statistic.KILL_ENTITY, EntityType.ZOMBIE);
-        int huskKilled = p.getStatistic(Statistic.KILL_ENTITY, EntityType.HUSK);
-        int ironGolem = p.getStatistic(Statistic.KILL_ENTITY, EntityType.IRON_GOLEM);
-        int totalZombieKilled = standardzombieKilled + huskKilled + ironGolem;
-        database.updateZombieQuery(p.getUniqueId(), totalZombieKilled);
-        int kills = p.getStatistic(Statistic.PLAYER_KILLS);
-        database.updateKillsQuery(p.getUniqueId(), kills);
-    } */
-
- /*   @EventHandler
-    public void snowball(ProjectileLaunchEvent e){
-        if(e.getEntity() instanceof Snowball){
-            Snowball snow = (Snowball) e.getEntity();
-            if(snow.getShooter() instanceof Player) {
-                Player p = (Player) snow.getShooter();
-                p.sendMessage("test");
-               if(!snowballs.containsKey(p.getUniqueId().toString())){
-                   snowballs.put(p.getUniqueId().toString(), 1);
-               }else {
-                   snowballs.put(p.getUniqueId().toString(),snowballs.get(p.getUniqueId().toString()) + 1);
-                   p.sendMessage("Rzucone Sniezki" + snowballs.get(p.getUniqueId().toString()));
-               }
-            }
-        }
-    } */
-
 
 
 
