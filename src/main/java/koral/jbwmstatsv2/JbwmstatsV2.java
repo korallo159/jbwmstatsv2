@@ -1,9 +1,6 @@
 package koral.jbwmstatsv2;
 
-import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Statistic;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -54,21 +52,19 @@ public final class JbwmstatsV2 extends JavaPlugin implements Listener {
     }
 
 @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e ){
-        Player p = e.getPlayer();
-        database.pushCustomStats(p.getUniqueId(), p);
+    public void onPlayerQuit(PlayerQuitEvent e ) {
+    Player p = e.getPlayer();
+    pushCustomStatsAsync(p);
 }
 
- /*   public void PushStatsAsync(Player p) {
+    public void pushCustomStatsAsync(Player p) {
         Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
             @Override
             public void run() {
-                pushStats(p);
+                database.pushCustomStats(p);
             }
         });
     }
-
-  */
 
     public void CreatePlayerAsync(Player p) {
         Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {

@@ -19,12 +19,10 @@ public class JbwmstatsV2Commands implements CommandExecutor, TabCompleter {
         this.plugin = plugin;
         database = new JbwmStatsV2Database(plugin);
     }
-
     public List<String> statistics(){
         List<String> stats = new ArrayList<>();
         for (Statistic s : Statistic.values()) {
             stats.add(s.toString());
-
         }
         List<String> blackStatsList = new ArrayList<>();
         blackStatsList.add(Statistic.MINE_BLOCK.toString()); blackStatsList.add(Statistic.USE_ITEM.toString()); blackStatsList.add(Statistic.BREAK_ITEM.toString());
@@ -33,23 +31,24 @@ public class JbwmstatsV2Commands implements CommandExecutor, TabCompleter {
         stats.removeAll(blackStatsList);
         return stats;
     }
-
 //TODO tab complete of current Tables.
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        Player player = (Player) sender;
         if (command.getName().equals("stats") && args.length == 1){
             List<String> commands = new ArrayList<>();
             commands.add("add");
             commands.add("remove");
             return commands;
         }
-        if (command.getName().equals("stats") && args.length == 2) {
+        if (command.getName().equals("stats") && args[0].equals("add")) {
             return statistics();
+        }
+        if (command.getName().equals("stats") && args[0].equals("remove")){
+           return database.getCurrentColumNames();
         }
         return null;
     }
-
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player p = (Player) sender;
@@ -64,9 +63,7 @@ public class JbwmstatsV2Commands implements CommandExecutor, TabCompleter {
                 p.sendMessage(ChatColor.GREEN + "Wyczyszczono statystyki gracza: " + ChatColor.YELLOW + target2.getName());
                 return true;
             }
-
         }
-
 //TODO check type of variabile
         if(command.getName().equals("stats"))
         switch(args[0]){
@@ -75,8 +72,6 @@ public class JbwmstatsV2Commands implements CommandExecutor, TabCompleter {
                     Statistic s = Statistic.valueOf(String.valueOf((args[1])));
                         database.customStatisticCreate(s.toString());
                         p.sendMessage(ChatColor.GREEN + "Utworzono kolumne " + s.toString());
-            //         s.toString();
-              //      p.sendMessage("test" + s);
                 }
                 break;
             case"remove":
@@ -86,12 +81,8 @@ public class JbwmstatsV2Commands implements CommandExecutor, TabCompleter {
                     p.sendMessage(ChatColor.RED + "Usunięto kolumne " + s);
                 }
         }
-
         return false;
     }
-
-
-
     public void resetStats(OfflinePlayer p){
         p.setStatistic(Statistic.KILL_ENTITY, EntityType.ZOMBIE, 0);
         p.setStatistic(Statistic.KILL_ENTITY, EntityType.HUSK, 0);
