@@ -19,7 +19,7 @@ public class JbwmstatsV2Commands implements CommandExecutor {
         this.plugin = plugin;
         database = new JbwmStatsV2Database(plugin);
     }
-
+//TODO Command improvement, check exceptions.
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player p = (Player) sender;
@@ -35,7 +35,6 @@ public class JbwmstatsV2Commands implements CommandExecutor {
                 return true;
             }
         }
-//TODO check type of variabile
         if(command.getName().equals("stats"))
         switch(args[0]){
             case "add":

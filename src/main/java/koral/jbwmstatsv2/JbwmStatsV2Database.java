@@ -16,7 +16,7 @@ public class JbwmStatsV2Database {
     public JbwmStatsV2Database(JbwmstatsV2 plugin) {
         this.plugin = plugin;
     }
-
+//TODO database create advanced statistic
     public static HikariDataSource hikari;
 
     public void connectToDatabase() {
