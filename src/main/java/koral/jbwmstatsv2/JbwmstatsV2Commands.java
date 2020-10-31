@@ -49,12 +49,12 @@ public class JbwmstatsV2Commands implements CommandExecutor {
                 break;
             case"remove":
                 if(args.length == 2) {
-                    if(args[1].equals("UUID") || args[2].equals("NICK")) {
+                    if(args[1].equals("UUID") || args[1].equals("NICK")) {
                         sender.sendMessage(ChatColor.RED + "Nie możesz usunąć głównych kolumn, uszkodziłoby to tabelę.");
                         break;
                     }
                     database.statisticRemove(args[1]);
-                    p.sendMessage(ChatColor.RED + "Usunięta kolumne" + args[1]);
+                    p.sendMessage(ChatColor.RED + "Usunięto kolumnę: " + args[1]);
                 }
                 else
                     sender.sendMessage(ChatColor.RED + "poprawne użycie: /stats remove <nazwa_kolumny>");
@@ -62,7 +62,12 @@ public class JbwmstatsV2Commands implements CommandExecutor {
             case"advancedstatadd":
                 if(args.length == 3){
                     String s = args[1] + "x" + args[2];
-                    database.customAdvancedStatisticCreate(s);
+                    if(args[1].equals("BREAK_ITEM") || args[1].equals("CRAFT_ITEM") || args[1].equals("ENTITY_KILLED_BY") || args[1].equals("PICKUP")
+                            || args[1].equals("DROP") || args[1].equals("KILL_ENTITY") || args[1].equals("MINE_BLOCK") || args[1].equals("USE_ITEM")) {
+                        database.customAdvancedStatisticCreate(s);
+                        sender.sendMessage(ChatColor.GREEN + "Utworzono kolumnę" + s);
+                    }
+                    else sender.sendMessage("Niepoprawny pierwszy argument!");
                 }
                 else
                     sender.sendMessage(ChatColor.RED + "poprawne użycie: /stats advancedstatadd <NAZWA_STATYSTYKI> <TYP>");

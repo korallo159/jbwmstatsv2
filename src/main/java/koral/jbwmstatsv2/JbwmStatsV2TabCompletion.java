@@ -71,7 +71,7 @@ public class JbwmStatsV2TabCompletion implements TabCompleter {
         List<String> advstats = new ArrayList<>();
         advstats.add(Statistic.MINE_BLOCK.toString()); advstats.add(Statistic.USE_ITEM.toString()); advstats.add(Statistic.BREAK_ITEM.toString());
         advstats.add(Statistic.CRAFT_ITEM.toString()); advstats.add(Statistic.KILL_ENTITY.toString()); advstats.add(Statistic.PICKUP.toString());
-        advstats.add(Statistic.DROP.toString());
+        advstats.add(Statistic.DROP.toString()); advstats.add(Statistic.ENTITY_KILLED_BY.toString());
         return advstats;
     }
 //TODO tab completion of use item, break item craft item, kill entity, pickup, drop
@@ -100,7 +100,7 @@ public class JbwmStatsV2TabCompletion implements TabCompleter {
     public List<String> statsENTITY(){
         List<String> list = new ArrayList<>();
         for(EntityType entity: EntityType.values()){
-            if(entity.isSpawnable())
+            if(entity.isSpawnable() && entity.isAlive())
                 list.add(entity.toString());
         }
         return list;
