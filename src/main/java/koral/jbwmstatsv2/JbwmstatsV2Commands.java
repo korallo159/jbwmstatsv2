@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -52,8 +53,10 @@ public class JbwmstatsV2Commands implements CommandExecutor {
                 }
                 break;
             case"advancedstatadd":
-                if(args.length == 2){
-
+                if(args.length == 3){
+                    p.sendMessage("test");
+                    String s = args[1] + "x" + args[2];
+                    database.customAdvancedStatisticCreate(s);
                 }
                 break;
         }

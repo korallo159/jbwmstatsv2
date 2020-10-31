@@ -2,7 +2,9 @@ package koral.jbwmstatsv2;
 
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Statistic;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import java.sql.*;
 import java.util.ArrayList;
@@ -205,6 +207,85 @@ public class JbwmStatsV2Database {
 
     }
 
+
+    //TODO
+    public void customAdvancedStatisticCreate(String s){
+        Connection connection = null;
+        String update = "ALTER TABLE Stats ADD " + s + " DOUBLE DEFAULT 0";
+        PreparedStatement statement = null;
+        try {
+            connection = hikari.getConnection();
+            statement = connection.prepareStatement(update);
+
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (statement != null)
+                try {
+                    statement.close();
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+
+    }
+
+    //TODO porownywanie przez nazwe kolumny np Statistic_KILL_ENTITY EntityType.ZOMBIE
+    public void pushCustomAdvancedStats(Player player) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = hikari.getConnection();
+            statement = connection.prepareStatement("SELECT * FROM Stats WHERE UUID=?");
+            statement.setString(1, player.getUniqueId().toString());
+            ResultSet results = statement.executeQuery();
+            results.next();
+            ResultSetMetaData rsmd = results.getMetaData();
+            int columnsNumber = rsmd.getColumnCount();
+            for (int i = 3; i < columnsNumber + 1; i++) {
+                String update = "UPDATE Stats SET " + rsmd.getColumnName(i) + "=? WHERE UUID=?";
+                statement = connection.prepareStatement(update);
+                double statystyka;
+                String columnName = rsmd.getColumnName(i);
+                String[] split= columnName.split("x");
+                    statystyka = player.getStatistic(Statistic.valueOf(split[0]), EntityType.valueOf(split[1]));
+                    statement.setDouble(1, statystyka);
+                    statement.setString(2, player.getUniqueId().toString());
+                    statement.execute();
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (statement != null)
+                try {
+                    statement.close();
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+
+    }
+
+
     public List<String> getCurrentColumNames(){
         Connection connection = null;
         PreparedStatement statement = null;
@@ -240,7 +321,23 @@ public class JbwmStatsV2Database {
         return currentCollumns;
     }
 
+
+    private String getFirstWord(String text) {
+
+        int index = text.indexOf(' ');
+
+        if (index > -1) { // Check if there is more than one word.
+
+            return text.substring(0, index).trim(); // Extract first word.
+
+        } else {
+
+            return text; // Text is the first word itself.
+        }
+    }
+
 }
+
 
 /*
     public void customStatisticCreate(String s, String variable){
