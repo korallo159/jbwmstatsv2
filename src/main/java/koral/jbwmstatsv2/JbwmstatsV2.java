@@ -16,20 +16,17 @@ import java.util.List;
 
 public final class JbwmstatsV2 extends JavaPlugin implements Listener {
     private JbwmstatsV2Commands commandExecutor;
-    private JbwmStatsV2TabCompletion tabCompleter;
+    private JbwmstatsV2listener listener;
 
     JbwmStatsV2Database database = new JbwmStatsV2Database(this);
     @Override
     public void onEnable() {
      commandExecutor = new JbwmstatsV2Commands(this);
-        File file = new File(getDataFolder() + File.separator + "config.yml");
-        if (!file.exists()) {
-            saveDefaultConfig();;
-        } else {
-            saveDefaultConfig();
-            reloadConfig();
-        }
-        this.getServer().getPluginManager().registerEvents(this, this);
+        new File(getDataFolder() + File.separator + "config.yml");
+        saveDefaultConfig();;
+
+        this.listener = new JbwmstatsV2listener(this);
+        this.getServer().getPluginManager().registerEvents(listener, this);
         this.getCommand("statspurge").setExecutor(commandExecutor);
         this.getCommand("stats").setExecutor(commandExecutor);
         this.getCommand("createtable").setExecutor(commandExecutor);
@@ -45,35 +42,6 @@ public final class JbwmstatsV2 extends JavaPlugin implements Listener {
         database.pushCustomStats(p);
     }
 
-@EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e){
-        Player p = e.getPlayer();
-        CreatePlayerAsync(p);
-    }
-
-@EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e ) {
-    Player p = e.getPlayer();
-    pushCustomStatsAsync(p);
-}
-
-    public void pushCustomStatsAsync(Player p) {
-        Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
-            @Override
-            public void run() {
-                database.pushCustomStats(p);
-            }
-        });
-    }
-
-    public void CreatePlayerAsync(Player p) {
-        Bukkit.getScheduler().runTaskAsynchronously(this, new Runnable() {
-            @Override
-            public void run() {
-                database.createPlayerQuery(p);
-            }
-        });
-    }
 
 
 

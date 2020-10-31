@@ -41,7 +41,7 @@ public class JbwmstatsV2Commands implements CommandExecutor {
             case "add":
                 if(args.length == 2){
                     Statistic s = Statistic.valueOf(String.valueOf((args[1])));
-                        database.customStatisticCreate(s.toString());
+                        CustomStatAsyncCreate(s.toString());
                         p.sendMessage(ChatColor.GREEN + "Utworzono kolumne " + s.toString());
                 }
                 else
@@ -53,7 +53,7 @@ public class JbwmstatsV2Commands implements CommandExecutor {
                         sender.sendMessage(ChatColor.RED + "Nie możesz usunąć głównych kolumn, uszkodziłoby to tabelę.");
                         break;
                     }
-                    database.statisticRemove(args[1]);
+                    ColumnRemoveAsync(args[1]);
                     p.sendMessage(ChatColor.RED + "Usunięto kolumnę: " + args[1]);
                 }
                 else
@@ -64,7 +64,7 @@ public class JbwmstatsV2Commands implements CommandExecutor {
                     String s = args[1] + "x" + args[2];
                     if(args[1].equals("BREAK_ITEM") || args[1].equals("CRAFT_ITEM") || args[1].equals("ENTITY_KILLED_BY") || args[1].equals("PICKUP")
                             || args[1].equals("DROP") || args[1].equals("KILL_ENTITY") || args[1].equals("MINE_BLOCK") || args[1].equals("USE_ITEM")) {
-                        database.customAdvancedStatisticCreate(s);
+                        CustomAdvancedStatisticAsyncCreate(s);
                         sender.sendMessage(ChatColor.GREEN + "Utworzono kolumnę" + s);
                     }
                     else sender.sendMessage("Niepoprawny pierwszy argument!");
@@ -78,6 +78,34 @@ public class JbwmstatsV2Commands implements CommandExecutor {
     //TODO reset function
     public void resetStats(OfflinePlayer p){
 
+    }
+
+
+    public void CustomStatAsyncCreate(String s) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                database.customStatisticCreate(s);
+            }
+        });
+    }
+
+    public void CustomAdvancedStatisticAsyncCreate(String s) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                database.customAdvancedStatisticCreate(s);
+            }
+        });
+    }
+
+    public void ColumnRemoveAsync(String s) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                database.statisticRemove(s);
+            }
+        });
     }
 
 }
