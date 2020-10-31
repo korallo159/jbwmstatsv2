@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Statistic;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import java.sql.*;
 import java.util.ArrayList;
@@ -177,13 +178,40 @@ public class JbwmStatsV2Database {
             ResultSetMetaData rsmd = results.getMetaData();
             int columnsNumber = rsmd.getColumnCount();
             for (int i = 3; i < columnsNumber + 1; i++) {
-                String update = "UPDATE Stats SET " + rsmd.getColumnName(i) + "=? WHERE UUID=?";
-                statement = connection.prepareStatement(update);
-                double statystyka;
-                statystyka = player.getStatistic(Statistic.valueOf(rsmd.getColumnName(i)));
-                statement.setDouble(1, statystyka);
-                statement.setString(2, player.getUniqueId().toString());
-                statement.execute();
+                if(!rsmd.getColumnName(i).contains("x")) {
+                    String update = "UPDATE Stats SET " + rsmd.getColumnName(i) + "=? WHERE UUID=?";
+                    statement = connection.prepareStatement(update);
+                    double statystyka;
+                    statystyka = player.getStatistic(Statistic.valueOf(rsmd.getColumnName(i)));
+                    statement.setDouble(1, statystyka);
+                    statement.setString(2, player.getUniqueId().toString());
+                    statement.execute();
+                }
+                else{
+                    String update = "UPDATE Stats SET " + rsmd.getColumnName(i) + "=? WHERE UUID=?";
+                    statement = connection.prepareStatement(update);
+                    double statystyka;
+                    String columnName = rsmd.getColumnName(i);
+                    String[] split= columnName.split("x");
+                    if(split[0].equals("KILL_ENTITY") || split[0].equals("ENTITY_KILLED_BY")) {
+                        statystyka = player.getStatistic(Statistic.valueOf(split[0]), EntityType.valueOf(split[1]));
+                        statement.setDouble(1, statystyka);
+                        statement.setString(2, player.getUniqueId().toString());
+                        statement.execute();
+                    }
+                   if(split[0].equals("MINE_BLOCK")){
+                       statystyka = player.getStatistic(Statistic.valueOf(split[0]), Material.valueOf(split[1]));
+                       statement.setDouble(1, statystyka);
+                       statement.setString(2, player.getUniqueId().toString());
+                       statement.execute();
+                   }
+                   if(split[0].equals("PICKUP") || split[0].equals("DROP") || split[0].equals("CRAFT_ITEM") || split[0].equals("BREAK_ITEM") || split[0].equals("USE_ITEM")){
+                       statystyka = player.getStatistic(Statistic.valueOf(split[0]), Material.valueOf(split[1]));
+                       statement.setDouble(1, statystyka);
+                       statement.setString(2, player.getUniqueId().toString());
+                       statement.execute();
+                   }
+                }
             }
 
         } catch (SQLException e) {
