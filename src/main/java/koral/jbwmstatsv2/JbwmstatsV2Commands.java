@@ -44,20 +44,28 @@ public class JbwmstatsV2Commands implements CommandExecutor {
                         database.customStatisticCreate(s.toString());
                         p.sendMessage(ChatColor.GREEN + "Utworzono kolumne " + s.toString());
                 }
+                else
+                    sender.sendMessage(ChatColor.RED + "poprawne użycie: /stats add <Statystyka>");
                 break;
             case"remove":
                 if(args.length == 2) {
-                    Statistic s = Statistic.valueOf(String.valueOf((args[1])));
-                    database.statisticRemove(s.toString());
-                    p.sendMessage(ChatColor.RED + "Usunięto kolumne " + s);
+                    if(args[1].equals("UUID") || args[2].equals("NICK")) {
+                        sender.sendMessage(ChatColor.RED + "Nie możesz usunąć głównych kolumn, uszkodziłoby to tabelę.");
+                        break;
+                    }
+                    database.statisticRemove(args[1]);
+                    p.sendMessage(ChatColor.RED + "Usunięta kolumne" + args[1]);
                 }
+                else
+                    sender.sendMessage(ChatColor.RED + "poprawne użycie: /stats remove <nazwa_kolumny>");
                 break;
             case"advancedstatadd":
                 if(args.length == 3){
-                    p.sendMessage("test");
                     String s = args[1] + "x" + args[2];
                     database.customAdvancedStatisticCreate(s);
                 }
+                else
+                    sender.sendMessage(ChatColor.RED + "poprawne użycie: /stats advancedstatadd <NAZWA_STATYSTYKI> <TYP>");
                 break;
         }
         return false;

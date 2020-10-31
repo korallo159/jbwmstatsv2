@@ -213,7 +213,6 @@ public class JbwmStatsV2Database {
                    }
                 }
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
