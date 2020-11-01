@@ -17,6 +17,7 @@ import java.util.List;
 public final class JbwmstatsV2 extends JavaPlugin implements Listener {
     private JbwmstatsV2Commands commandExecutor;
     private JbwmstatsV2listener listener;
+    private JbwmstatsV2Gui guiListener;
 
     JbwmStatsV2Database database = new JbwmStatsV2Database(this);
     @Override
@@ -24,9 +25,10 @@ public final class JbwmstatsV2 extends JavaPlugin implements Listener {
      commandExecutor = new JbwmstatsV2Commands(this);
         new File(getDataFolder() + File.separator + "config.yml");
         saveDefaultConfig();;
-
+        this.guiListener = new JbwmstatsV2Gui(this);
         this.listener = new JbwmstatsV2listener(this);
         this.getServer().getPluginManager().registerEvents(listener, this);
+        this.getServer().getPluginManager().registerEvents(guiListener, this);
         this.getCommand("statspurge").setExecutor(commandExecutor);
         this.getCommand("stats").setExecutor(commandExecutor);
         this.getCommand("createtable").setExecutor(commandExecutor);

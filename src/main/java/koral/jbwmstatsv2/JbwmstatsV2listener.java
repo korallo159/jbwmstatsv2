@@ -8,25 +8,26 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class JbwmstatsV2listener implements Listener {
-
     JbwmstatsV2 plugin;
     JbwmStatsV2Database database;
+
     public JbwmstatsV2listener(final JbwmstatsV2 plugin) {
         this.plugin = plugin;
         database = new JbwmStatsV2Database(plugin);
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e){
+    public void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         CreatePlayerAsync(p);
     }
 
     @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent e ) {
+    public void onPlayerQuit(PlayerQuitEvent e) {
         Player p = e.getPlayer();
         pushCustomStatsAsync(p);
     }
+
 
     public void pushCustomStatsAsync(Player p) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
@@ -47,31 +48,6 @@ public class JbwmstatsV2listener implements Listener {
     }
 
 
-    public void CustomAsyncCreate(String s) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                database.customStatisticCreate(s);
-            }
-        });
-    }
 
-    public void CustomAdvancedStatisticAsyncCreate(String s) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                database.customAdvancedStatisticCreate(s);
-            }
-        });
-    }
-
-    public void ColumnRemoveAsync(String s) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                database.statisticRemove(s);
-            }
-        });
-    }
 
 }
