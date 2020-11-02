@@ -147,7 +147,7 @@ public class JbwmstatsV2Gui implements Listener {
                 }
                 break;
             case KELP:
-                if(e.getView().getPlayer().getOpenInventory().getTopInventory().equals(pagestats1(p)))
+                if(p.getOpenInventory().getTopInventory() == pagestats1(p))
                 p.openInventory(pagestats2(p));
                 break;
             case BARRIER:
