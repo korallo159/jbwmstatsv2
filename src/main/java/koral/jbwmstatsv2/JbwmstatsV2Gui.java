@@ -65,6 +65,31 @@ public class JbwmstatsV2Gui implements Listener {
         return inv;
     }
 
+    public Inventory pageRemove(Player player){
+        Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Gui stats manager");
+        for(int i=0; i<52; i++){
+            if(database.getCurrentColumNames().size() > i) {
+                inv.setItem(i, createItem(Material.BOOK, database.getCurrentColumNames().get(i)));
+            }
+            else break;
+        }
+        inv.setItem(53, createItem(Material.BARRIER, "Powrót", "Kliknij aby powrócić"));
+        return inv;
+    }
+
+    public Inventory pageAdvancedStats(Player player) {
+        Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Gui stats manager");
+        for(int i =0; i<52; i++){
+            if(tabCompletion.advancedStatistics().size() > i) {
+                inv.setItem(i, createItem(Material.WRITABLE_BOOK, tabCompletion.advancedStatistics().get(i)));
+            }
+            else break;
+        }
+        inv.setItem(53, createItem(Material.BARRIER, "Powrót", "Kliknij aby powrócić"));
+        return inv;
+    }
+
+
 
     @EventHandler
     public void clickEvent(InventoryClickEvent e) {
@@ -73,14 +98,28 @@ public class JbwmstatsV2Gui implements Listener {
             return;
         ItemStack clickedItem = e.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
-
-
-
         switch (e.getCurrentItem().getType()) {
             case BOOK:
+                if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.RED +"Stwórz statystykę"))
                 p.openInventory(pagestats1(p));
+                if(database.getCurrentColumNames().contains(e.getCurrentItem().getItemMeta().getDisplayName())){
+                    database.statisticRemove(e.getCurrentItem().getItemMeta().getDisplayName());
+                    p.sendMessage(ChatColor.RED + "Usunięto kolumnę: " + e.getCurrentItem().getItemMeta().getDisplayName());
+                    p.openInventory(pageRemove(p));
+                }
                 break;
+            case BOOKSHELF:
+                if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.RED+ "Stwórz zaawansowaną statystykę"))
+                    p.openInventory(pageAdvancedStats(p));
+
+
+                break;
+
+
             case WRITABLE_BOOK:
+                if(e.getCurrentItem().getItemMeta().getDisplayName().equals(ChatColor.RED +"usuń kolumnę z bazy daanych")){
+                    p.openInventory(pageRemove(p));
+                }
                 if(tabCompletion.statistics().contains(e.getCurrentItem().getItemMeta().getDisplayName())) {
                   database.customStatisticCreate(e.getCurrentItem().getItemMeta().getDisplayName());
                   p.sendMessage(ChatColor.GREEN + "Utworzono kolumnę " + e.getCurrentItem().getItemMeta().getDisplayName());
