@@ -3,18 +3,17 @@ package koral.jbwmstatsv2;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.block.data.type.TNT;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryDragEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class JbwmstatsV2Gui implements Listener {
     JbwmstatsV2 plugin;
@@ -25,7 +24,6 @@ public class JbwmstatsV2Gui implements Listener {
         tabCompletion = new JbwmStatsV2TabCompletion(plugin);
         database = new JbwmStatsV2Database(plugin);
     }
-
     public ItemStack createItem(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material, 1);
         ItemMeta meta = item.getItemMeta();
@@ -36,8 +34,6 @@ public class JbwmstatsV2Gui implements Listener {
         item.setItemMeta(meta);
         return item;
     }
-
-
     public Inventory pageMain(Player player) {
         Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Gui stats manager");
         inv.setItem(3, createItem(Material.BOOK, ChatColor.RED +"Create statistic", ChatColor.GRAY+ "Click if you want create statistic"));
@@ -47,16 +43,16 @@ public class JbwmstatsV2Gui implements Listener {
         return inv;
     }
     public Inventory pagestats1(Player player) {
-        Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Gui stats manager");
+        Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Stats page 1");
         for(int i =0; i<52; i++){
             inv.setItem(i, createItem(Material.WRITABLE_BOOK, tabCompletion.statistics().get(i)));
         }
-        inv.setItem(52,createItem(Material.KELP, ChatColor.GREEN + "Strona 2"));
+        inv.setItem(52,createItem(Material.KELP, "Page 2"));
         inv.setItem(53, createItem(Material.BARRIER, "Powrót"));
         return inv;
     }
     public Inventory pagestats2(Player player) {
-        Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Gui stats manager");
+        Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Stats page 2");
         for(int i =0; i<52; i++){
             int b = i + 52;
             if(b==74) break;
@@ -65,9 +61,8 @@ public class JbwmstatsV2Gui implements Listener {
         inv.setItem(53, createItem(Material.BARRIER, "Powrót"));
         return inv;
     }
-
     public Inventory pageRemove(Player player){
-        Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Gui stats manager");
+        Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Remove page");
         for(int i=0; i<52; i++){
             if(database.getCurrentColumNames().size() > i) {
                 inv.setItem(i, createItem(Material.BOOK, database.getCurrentColumNames().get(i)));
@@ -77,9 +72,8 @@ public class JbwmstatsV2Gui implements Listener {
         inv.setItem(53, createItem(Material.BARRIER, "Powrót"));
         return inv;
     }
-
     public Inventory pageAdvancedStats(Player player) {
-        Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Gui stats manager");
+        Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Page advanced stats");
         for(int i =0; i<52; i++){
             if(tabCompletion.advancedStatistics().size() > i) {
                 inv.setItem(i, createItem(Material.BOOKSHELF, tabCompletion.advancedStatistics().get(i)));
@@ -89,9 +83,8 @@ public class JbwmstatsV2Gui implements Listener {
         inv.setItem(53, createItem(Material.BARRIER, "Powrót"));
         return inv;
     }
-
     public Inventory pageAdvancedEntity(Player player) {
-        Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Gui stats manager");
+        Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Page advanced stats entity 1");
         for(int i =0; i<52; i++){
             if(tabCompletion.statsENTITY().size() > i) {
                 inv.setItem(i, createItem(Material.BOOKSHELF, tabCompletion.statsENTITY().get(i)));
@@ -102,14 +95,38 @@ public class JbwmstatsV2Gui implements Listener {
         inv.setItem(53, createItem(Material.BARRIER, "Powrót"));
         return inv;
     }
+    public Inventory pageAdvancedEntity2(Player player)
+    {
+        Inventory inv = Bukkit.createInventory(player, 54, ChatColor.RED + "Page advanced stats entity 2");
+        for(int i =0; i<52; i++){
+            int b = i +52;
+            if(b ==71 ) break;
+            inv.setItem(i, createItem(Material.BOOKSHELF, tabCompletion.statsENTITY().get(b)));
+        }
+        inv.setItem(52, createItem(Material.KELP, "Page 2"));
+        inv.setItem(53, createItem(Material.BARRIER, "Powrót"));
+        return inv;
+    }
+
+    public boolean views(InventoryClickEvent e){
+       if(e.getView().getTitle().equals(ChatColor.RED + "Gui stats manager") && e.getView().getTitle().equals(ChatColor.RED + "Remove page") &&
+               e.getView().getTitle().equals(ChatColor.RED + "Page advanced stats") &&
+               e.getView().getTitle().equals(ChatColor.RED + "Page advanced stats entity 1") &&
+               e.getView().getTitle().equals(ChatColor.RED + "Page advanced stats entity 2") &&
+               e.getView().getTitle().equals(ChatColor.RED + "Stats page 1") &&
+               e.getView().getTitle().equals(ChatColor.RED + "Stats page 2"))
+                    return true;
 
 
+       return false;
+
+    }
 
 
     @EventHandler
     public void clickEvent(InventoryClickEvent e) {
         Player p = (Player) e.getWhoClicked();
-        if (!e.getView().getTitle().equals(ChatColor.RED + "Gui stats manager"))
+        if(views(e))
             return;
         ItemStack clickedItem = e.getCurrentItem();
         if (clickedItem == null || clickedItem.getType() == Material.AIR) return;
@@ -147,14 +164,17 @@ public class JbwmstatsV2Gui implements Listener {
                 }
                 break;
             case KELP:
-                if(p.getOpenInventory().getTopInventory() == pagestats1(p))
-                p.openInventory(pagestats2(p));
+                if(e.getView().getTitle().equals(ChatColor.RED + "Stats page 1"))
+                    p.openInventory(pagestats2(p));
+                if(e.getView().getTitle().equals(ChatColor.RED + "Page advanced stats entity 1"))
+                    p.openInventory(pageAdvancedEntity2(p));
+
                 break;
             case BARRIER:
                 p.openInventory(pageMain(p));
                 break;
             }
-e.setCancelled(true);
+    e.setCancelled(true);
         }
 
 
